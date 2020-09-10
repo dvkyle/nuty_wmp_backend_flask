@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-server
+  labels:
+    run: media-server
+spec:
+  ports:
+  - name: application
+    port: 2560
+    protocol: TCP
+  selector:
+    run: media-server
+---
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: media-server
+spec:
+  selector:
+    matchLabels:
+      run: media-server
+  template:
+    metadata:
+      labels:
+        run: media-server
+    spec:
+      imagePullSecrets:
+      - name: ta-staging-pull
+      containers:
+      - name: media-server
+        image: tastaging.azurecr.io/media-server:v0.3
+        env:
+          - name: FLASK_ENV
+            value: live
+        envFrom:
+        - configMapRef:
+            name: ta-env-config
+        ports:
+        - containerPort: 2560

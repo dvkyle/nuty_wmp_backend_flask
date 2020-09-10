@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wmp-backend-api
+  labels:
+    run: wmp-backend-api
+spec:
+  ports:
+  - name: application
+    port: 4100
+    protocol: TCP
+  selector:
+    run: wmp-backend-api
+---
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: wmp-backend-api
+spec:
+  selector:
+    matchLabels:
+      run: wmp-backend-api
+  template:
+    metadata:
+      labels:
+        run: wmp-backend-api
+    spec:
+      imagePullSecrets:
+      - name: ta-staging-pull
+      containers:
+      - name: wmp-backend-api
+        image: tastaging.azurecr.io/wmp-backend-api:v0.3
+        env:
+          - name: FLASK_ENV
+            value: live
+        envFrom:
+        - configMapRef:
+            name: ta-env-config
+        ports:
+        - containerPort: 4100

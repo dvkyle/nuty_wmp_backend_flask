@@ -1,0 +1,19 @@
+apiVersion: batch/v1beta1 
+kind: CronJob 
+metadata:
+  name: daily-sales-reports
+spec:
+  schedule: "30 6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+          - name: ta-staging-pull
+          restartPolicy: "OnFailure"
+          containers:
+          - name: daily-sales-reports
+            image: tastaging.azurecr.io/daily-sales-reports:v1
+            envFrom:
+            - configMapRef:
+                name: ta-env-config

@@ -1,0 +1,14 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+metadata:
+    name: daily-sales-reports
+build:
+    artifacts:
+        - image: tastaging.azurecr.io/daily-sales-reports
+          context: ../
+          docker:
+            dockerfile: ./reporting/Dockerfile
+deploy:
+    kubectl:
+        manifests:
+        - ./daily-sales-reports.yaml

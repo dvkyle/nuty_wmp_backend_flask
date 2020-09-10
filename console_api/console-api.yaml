@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mmc-api
+  labels:
+    run: mmc-api
+spec:
+  ports:
+  - name: application
+    port: 2900
+    protocol: TCP
+  selector:
+    run: mmc-api
+---
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: mmc-api
+spec:
+  selector:
+    matchLabels:
+      run: mmc-api
+  template:
+    metadata:
+      labels:
+        run: mmc-api
+    spec:
+      imagePullSecrets:
+      - name: ta-staging-pull
+      containers:
+      - name: mmc-api
+        image: tastaging.azurecr.io/mmc-api:v0.3
+        env:
+          - name: FLASK_ENV
+            value: live
+        envFrom:
+        - configMapRef:
+            name: ta-env-config
+        ports:
+        - containerPort: 2900

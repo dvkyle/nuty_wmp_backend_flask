@@ -1,0 +1,14 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+metadata:
+    name: console-api
+build:
+    artifacts:
+        - image: tastaging.azurecr.io/mmc-api
+          context: ../
+          docker:
+            dockerfile: ./console_api/Dockerfile
+deploy:
+    kubectl:
+        manifests:
+        - ./console-api.yaml

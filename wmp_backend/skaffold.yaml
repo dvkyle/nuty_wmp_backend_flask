@@ -1,0 +1,14 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+metadata:
+    name: wmp-backend-api
+build:
+    artifacts:
+        - image: tastaging.azurecr.io/wmp-backend-api
+          context: ../
+          docker:
+            dockerfile: ./wmp_backend/Dockerfile
+deploy:
+    kubectl:
+        manifests:
+        - ./wmp-backend-api.yaml

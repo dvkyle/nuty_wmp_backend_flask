@@ -1,0 +1,14 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+metadata:
+    name: media-server
+build:
+    artifacts:
+        - image: tastaging.azurecr.io/media-server
+          context: ../
+          docker:
+            dockerfile: ./media-server/Dockerfile
+deploy:
+    kubectl:
+        manifests:
+        - ./media-server.yaml
