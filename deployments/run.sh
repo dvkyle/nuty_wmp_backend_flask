@@ -1,3 +1,8 @@
+#!/bin/sh
+
+/etc/init.d/nginx start
+service redis-server restart
+
 export CA_URL="https://tulitahara-ca.southeastasia.cloudapp.azure.com:4443"
 export CA_URL_ENROLL_PARTNER_APP="https://tulitahara-ca.southeastasia.cloudapp.azure.com:4443/enroll-partner-app"
 export SCBACKEND_URL="https://tulitahara-scbend.southeastasia.cloudapp.azure.com:8449"

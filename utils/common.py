@@ -4,7 +4,7 @@ import os
 import gspread
 import traceback
 import csv
-import json
+import json,time,datetime,status
 
 from PIL import Image
 from . import constants
@@ -17,6 +17,10 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 from redis import Redis
+from flask import Flask, request, jsonify, Response
+import status
+
+
 
 from cryptography.fernet import Fernet
 key = 'Ei6nPc5f-XUbN7Wev2DOWhL0BBT2SfLb3saw06uohwQ='
@@ -355,3 +359,53 @@ def get_tenant_db_login_details(tenant_id):
         cursor.close()
         connection.close()
         return credential
+
+
+log = getLogger("wmp_backend_api")
+
+def get_request_ip(request):
+    if request.META.get('HTTP_X_FORWARDED_FOR') is not None:
+        return request.META['HTTP_X_FORWARDED_FOR']
+    elif request.META.get('REMOTE_ADDR') is not None:
+        return request.META['REMOTE_ADDR']
+    else:
+        return "localhost"
+
+
+def seconds_to_next_day():
+    next_day = datetime.date.today() + datetime.timedelta(days=1)
+    seconds_to_next_day = int(time.mktime(next_day.timetuple()) - time.time()) + 1
+    return seconds_to_next_day
+
+
+def error_response(code=status.HTTP_400_BAD_REQUEST,
+                   reason=None, message=None):
+    error = {"code": code}
+    if reason:
+        error["reason"] = reason
+    if message:
+        error["message"] = message
+
+    log.error("response error: %s", error)
+    return jsonify({"error": error})
+
+
+def simple_response(code=status.HTTP_200_OK,
+                    reason=None, message=None):
+    data_json = {"code": code}
+    if reason:
+        data_json["reason"] = reason
+    if message:
+        data_json["message"] = message
+
+    log.info("response data: %s", data_json)
+    return jsonify(data_json)
+
+
+def dict_decode(trans_dict: dict):
+    new_dict = {}
+    for key in trans_dict:
+        value = trans_dict[key].decode()
+        key = key.decode()
+        new_dict[key] = value
+    return new_dict

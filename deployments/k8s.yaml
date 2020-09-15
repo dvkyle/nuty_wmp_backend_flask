@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nuty-mp-backend
+  labels:
+    app.kubernetes.io/name: nuty-mp-backend
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nuty-mp-backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nuty-mp-backend
+    spec:
+	  imagePullSecrets:
+      - name: harbor
+      containers:
+        - name: nuty-mp-backend
+          image: tastaging.azurecr.io/nuty_mpbe:1.0.0
+          imagePullPolicy: IfNotPresent   
+          env:
+          - name: CA_URL
+            value: ca
+          ports:
+            - containerPort: 8000
+	  volumeMounts:
+        - mountPath: /home/src/logs
+          name: nuty-mpbe
+          subPath: logs
+	  volumes:
+      - name: nuty-mpbe
+        persistentVolumeClaim:
+          claimName: nuty-mpbe
+---
+apiVersion: extensions/v1beta1
+kind: Service
+metadata:
+  name: nuty-mp-backend-svc
+  labels:
+    run: nuty-mp-backend-svc
+spec:
+  ports:
+  - name: http
+    port: 8089
+    targetPort: 80
+    protocol: TCP
+   selector:
+    run: nuty-mp-backend
+  type: LoadBalancer

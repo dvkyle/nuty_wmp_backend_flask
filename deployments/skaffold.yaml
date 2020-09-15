@@ -1,0 +1,14 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+metadata:
+    name: nuty-mp-backend
+build:
+    artifacts:
+        - image: tastaging.azurecr.io/nuty_mpbe
+          context: ../
+          docker:
+            dockerfile: ./deployments/Dockerfile
+deploy:
+    kubectl:
+        manifests:
+        - ./k8s.yaml
