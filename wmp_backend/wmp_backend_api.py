@@ -135,6 +135,9 @@ def smartchiller_backend_call(link, payload):
     json_obj = json.loads(string_response)
     return json_obj
 
+@app.route("/", methods = ['GET'])
+def index():
+    return "Nuty wmp_backend flask is running "
 
 @app.route(PREFIX + "/start-smart-chiller-transaction", methods=['POST'], endpoint="start")
 @token_decorator
